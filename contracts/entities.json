@@ -1,0 +1,17 @@
+{
+  "schema_version": "1",
+  "domain": "高坝鱼类过坝链路核验",
+  "required_fields": [
+    "fish_lot",
+    "species_code",
+    "transfer_stage",
+    "container_ref",
+    "count"
+  ],
+  "time_format": "ISO 8601 with offset",
+  "sample": {
+    "fish_lot": "FISH-DEMO",
+    "species_code": "SCHIZOTHORAX",
+    "count": 120
+  }
+}
