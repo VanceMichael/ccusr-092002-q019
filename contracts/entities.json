@@ -1,17 +1,64 @@
 {
-  "schema_version": "1",
+  "schema_version": "2",
   "domain": "高坝鱼类过坝链路核验",
+  "time_format": "ISO 8601 with offset（日期允许 YYYY-MM-DD）",
   "required_fields": [
     "fish_lot",
     "species_code",
+    "origin",
     "transfer_stage",
     "container_ref",
     "count"
   ],
-  "time_format": "ISO 8601 with offset",
+  "enums": {
+    "origin": {
+      "WILD": "天然野生过坝鱼：只核验过坝数量守恒，永不计入放流成效",
+      "HATCHERY": "增殖站鱼苗：登记耳石/荧光标记，回捕命中后才计入放流成效"
+    },
+    "transfer_stage": {
+      "SORTING": "分拣",
+      "HOIST_155M": "155米轨道提升",
+      "LAND_TRANSPORT": "陆运（无人车）",
+      "VESSEL_TRANSPORT": "船运（运鱼船）",
+      "RELEASE": "放流"
+    },
+    "handoff_status": {
+      "DISPATCHED": "已发出，等待逐箱接收清点",
+      "BLOCKED": "清点短数且缺少经确认的死亡/重新分拣凭证，禁止继续流转",
+      "BALANCED": "数量守恒配平：清点相符，或短数全部由已确认凭证解释"
+    },
+    "loss_kind": {
+      "DEATH": "死亡（确认后抵减短数）",
+      "RESORT": "重新分拣（确认后从本批转出并并入 to_lot_code 指定批次）"
+    },
+    "loss_status": ["PENDING", "CONFIRMED", "REJECTED"],
+    "mark_type": {
+      "OTOLITH": "耳石（热）标记",
+      "FLUORESCENT": "荧光标记"
+    },
+    "recapture_origin_result": {
+      "CREDITED": "标记命中已登记增殖批次，计入该批放流成效",
+      "WILD": "无标记天然鱼，不计放流成效",
+      "UNMATCHED_MARK": "有标记但系统查无对应增殖批次，不计成效并待人工核查"
+    }
+  },
+  "field_notes": {
+    "fish_lot": "业务批次号；同一批次贯穿五段交接",
+    "species_code": "物种代码，如 SCHIZOTHORAX（裂腹鱼属）",
+    "container_ref": "运输箱编号；发出与接收必须逐箱登记，箱量合计须等于守恒应发数",
+    "count": "非负整数；逐箱 expected_count/received_count 之差定位短数发生的环节与箱体",
+    "to_lot_code": "仅 RESORT 必填：鱼被重新分拣并入的目标批次",
+    "evidence_ref": "死亡/重分拣或回捕检出的照片、录像、纸质单据或样本编号",
+    "confirmed_by": "凭证确认人；仅 CONFIRMED 凭证具备守恒效力，设备故障不能抵减短数",
+    "release_site_code": "放流地点代码，放流环节配平后必须登记放流地点才完成放流",
+    "marker_code": "标记批号/荧光色号/耳石纹理解码字；回捕时据此匹配增殖批次"
+  },
   "sample": {
     "fish_lot": "FISH-DEMO",
     "species_code": "SCHIZOTHORAX",
+    "origin": "HATCHERY",
+    "transfer_stage": "HOIST_155M",
+    "container_ref": "BOX-1",
     "count": 120
   }
 }

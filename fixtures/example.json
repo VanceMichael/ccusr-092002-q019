@@ -1,5 +1,49 @@
 {
-  "fish_lot": "FISH-DEMO",
-  "species_code": "SCHIZOTHORAX",
-  "count": 120
+  "lot_registration": {
+    "lot_code": "FISH-DEMO",
+    "species_code": "SCHIZOTHORAX",
+    "origin": "HATCHERY",
+    "source": "叶巴滩增殖站",
+    "initial_count": 120,
+    "recorded_by": "分拣员甲"
+  },
+  "stage_dispatch": {
+    "transfer_stage": "HOIST_155M",
+    "containers": [
+      {"container_ref": "BOX-1", "expected_count": 60},
+      {"container_ref": "BOX-2", "expected_count": 60}
+    ],
+    "reported_by": "提升站丁"
+  },
+  "stage_receive_with_shortage": {
+    "containers": [
+      {"container_ref": "BOX-1", "received_count": 58},
+      {"container_ref": "BOX-2", "received_count": 60}
+    ],
+    "receiver_by": "无人车调度戊"
+  },
+  "confirmed_loss_required": {
+    "kind": "DEATH",
+    "count": 2,
+    "reason": "提升挤压窒息",
+    "evidence_ref": "EV-20260402-01",
+    "reported_by": "提升站丁"
+  },
+  "mark_registration": {
+    "mark_type": "OTOLITH",
+    "marker_code": "OT-2026-001",
+    "marked_count": 120,
+    "marked_at": "2026-04-01T09:00:00+08:00"
+  },
+  "monitoring_recapture_credited": {
+    "species_code": "SCHIZOTHORAX",
+    "count": 3,
+    "mark_type": "OTOLITH",
+    "marker_code": "OT-2026-001",
+    "evidence_ref": "OTOSAMPLE-1"
+  },
+  "monitoring_recapture_wild_not_credited": {
+    "species_code": "SCHIZOTHORAX",
+    "count": 7
+  }
 }
