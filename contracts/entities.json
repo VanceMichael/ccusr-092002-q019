@@ -1,17 +1,90 @@
 {
-  "schema_version": "1",
+  "schema_version": "2",
   "domain": "高坝鱼类过坝链路核验",
-  "required_fields": [
-    "fish_lot",
-    "species_code",
-    "transfer_stage",
-    "container_ref",
-    "count"
-  ],
   "time_format": "ISO 8601 with offset",
-  "sample": {
-    "fish_lot": "FISH-DEMO",
-    "species_code": "SCHIZOTHORAX",
-    "count": 120
+  "time_example": "2026-09-20T08:30:00+08:00",
+  "stages": [
+    { "code": "COLLECTION", "name": "集鱼槽收集" },
+    { "code": "SORTING", "name": "站点分拣" },
+    { "code": "RAIL_LIFT", "name": "轨道提升(155米)" },
+    { "code": "LAND_TRANSPORT", "name": "无人车陆运" },
+    { "code": "VESSEL_TRANSPORT", "name": "运鱼船船运" },
+    { "code": "RELEASE_SITE", "name": "放流点" }
+  ],
+  "origins": {
+    "WILD": "天然过坝野生鱼，不计入增殖放流成效",
+    "HATCHERY": "增殖站鱼苗，标记回捕可计入放流成效"
+  },
+  "entities": {
+    "lot": {
+      "required_fields": ["lot_ref", "species_code", "origin", "count"],
+      "optional_fields": ["entry_stage", "notes", "occurred_at", "created_by"],
+      "status_values": ["IN_CHAIN", "IN_TRANSIT", "BLOCKED", "RELEASED"]
+    },
+    "handover": {
+      "required_fields": ["lot_ref", "from_stage", "to_stage", "sent_count", "containers"],
+      "containers_required_fields": ["container_ref", "sent_count"],
+      "receive_fields": ["handover_id", "containers[].received_count 或 received_count"],
+      "status_values": ["SENT", "CONFIRMED", "DISPUTED"],
+      "rule": "必须沿标准链路相邻环节发出；箱体数量合计必须等于 sent_count；received_count 不得大于 sent_count；短少未由经确认的死亡或重分拣记录全额销账前，批次保持 BLOCKED，不能继续流转"
+    },
+    "loss_event": {
+      "required_fields": ["lot_ref", "count", "cause"],
+      "conditional_fields": ["handover_id（销记交接短少）", "stage_code（站点存活期死亡，二选一）"],
+      "optional_fields": ["fault_id", "notes", "occurred_at", "recorded_by"],
+      "status_values": ["PENDING", "CONFIRMED", "REJECTED"],
+      "rule": "只有 CONFIRMED 死亡才能覆盖短少差额并扣减账面"
+    },
+    "resort_event": {
+      "required_fields": ["from_lot_ref", "count", "reason"],
+      "conditional_fields": ["to_lot_ref 或 to_species_code", "handover_id（销记交接短少）或 stage_code（站点重分拣）"],
+      "status_values": ["PENDING", "CONFIRMED", "REJECTED"],
+      "rule": "只在同环节批次间划转；不允许借重分拣改变 WILD/HATCHERY 来源"
+    },
+    "equipment_fault": {
+      "required_fields": ["equipment_ref", "stage_code", "fault_type"],
+      "optional_fields": ["fault_id", "description", "lot_refs", "started_at", "notes"],
+      "status_values": ["OPEN", "RESOLVED"]
+    },
+    "release": {
+      "required_fields": ["lot_ref", "count", "waterbody"],
+      "optional_fields": ["release_ref", "site_name", "latitude", "longitude", "released_at", "released_by", "notes"],
+      "rule": "批次必须到达 RELEASE_SITE 且 count 等于账面存活数；一批只能放流一次"
+    },
+    "mark": {
+      "required_fields": ["lot_ref", "mark_type", "mark_code", "marked_count", "marked_at"],
+      "mark_type_values": ["OTOLITH", "FLUORESCENT", "PIT", "OTHER"]
+    },
+    "survey": {
+      "required_fields": ["survey_date", "waterbody"],
+      "optional_fields": ["survey_ref", "site_name", "latitude", "longitude", "method", "investigator_ref", "notes"]
+    },
+    "recapture": {
+      "required_fields": ["species_code", "count"],
+      "optional_fields": ["mark_code", "notes"],
+      "match_status_values": ["MATCHED", "UNMATCHED"],
+      "rule": "mark_code 命中 marks 表才 MATCHED；无标记或编码未知一律 UNMATCHED，不归属放流批次"
+    }
+  },
+  "trace_view": {
+    "path": "GET /v1/lots/{lot_ref}/trace",
+    "includes": [
+      "balance 账面恒等式（存活 + 确认死亡 + 已放流 = 初登 + 重分拣入 - 重分拣出）",
+      "stages[] 每段交接的发出/接收/短少/销账与结果（IN_TRANSIT/BALANCED/BLOCKED）",
+      "standalone_losses 站点死亡记录",
+      "resorts 重分拣记录",
+      "faults 设备故障记录",
+      "release 放流水体、地点、坐标",
+      "marks 耳石/荧光标记",
+      "recaptures 放流后回捕调查证据",
+      "effectiveness 增殖放流成效（仅 HATCHERY 且仅 MATCHED 回捕）",
+      "conservation_ok 与 open_issues 未决问题清单"
+    ]
+  },
+  "error_http_status": {
+    "400": "JSON 格式错误或包含未知字段",
+    "404": "引用的记录不存在",
+    "409": "记录当前状态不允许该操作（重复确认、未销账继续流转等）",
+    "422": "违反守恒或登记规则"
   }
 }

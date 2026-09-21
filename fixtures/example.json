@@ -1,5 +1,91 @@
 {
-  "fish_lot": "FISH-DEMO",
-  "species_code": "SCHIZOTHORAX",
-  "count": 120
+  "description": "交换示例：增殖批次 HATCH-DEMO 与野生批次 WILD-DEMO 的链路登记样例（不含真实身份）",
+  "register_lots": [
+    {
+      "lot_ref": "HATCH-DEMO",
+      "species_code": "S_WANG",
+      "origin": "HATCHERY",
+      "count": 1000
+    },
+    {
+      "lot_ref": "WILD-DEMO",
+      "species_code": "S_WANG",
+      "origin": "WILD",
+      "count": 120
+    }
+  ],
+  "dispatch_sorting_to_rail": {
+    "lot_ref": "WILD-DEMO",
+    "from_stage": "SORTING",
+    "to_stage": "RAIL_LIFT",
+    "sent_count": 120,
+    "containers": [
+      { "container_ref": "YBT-BOX-0101", "sent_count": 60 },
+      { "container_ref": "YBT-BOX-0102", "sent_count": 60 }
+    ],
+    "sent_at": "2026-09-20T09:10:00+08:00",
+    "sent_by": "分拣站值班员"
+  },
+  "receive_with_shortage": {
+    "handover_id": "HO-由发出接口返回",
+    "containers": [
+      { "container_ref": "YBT-BOX-0101", "received_count": 60 },
+      { "container_ref": "YBT-BOX-0102", "received_count": 58 }
+    ],
+    "received_at": "2026-09-20T09:35:00+08:00",
+    "received_by": "提升站值班员",
+    "note": "0102 箱短少 2 尾，已拍照留存"
+  },
+  "confirmed_loss_for_shortage": {
+    "lot_ref": "WILD-DEMO",
+    "handover_id": "HO-由发出接口返回",
+    "count": 2,
+    "cause": "轨道提升途中缺氧死亡",
+    "fault_id": "FLT-关联设备故障",
+    "occurred_at": "2026-09-20T09:30:00+08:00",
+    "recorded_by": "提升站值班员"
+  },
+  "equipment_fault": {
+    "equipment_ref": "RAIL-HOIST-02",
+    "stage_code": "RAIL_LIFT",
+    "fault_type": "STOPPAGE",
+    "description": "155 米轨道提升机中途停车约 40 分钟",
+    "lot_refs": ["WILD-DEMO"],
+    "started_at": "2026-09-20T09:12:00+08:00"
+  },
+  "release": {
+    "lot_ref": "WILD-DEMO",
+    "count": 118,
+    "waterbody": "金沙江",
+    "site_name": "叶巴滩坝上 3 公里放流点",
+    "latitude": 30.76,
+    "longitude": 99.02,
+    "released_at": "2026-09-20T14:00:00+08:00"
+  },
+  "hatchery_mark": {
+    "lot_ref": "HATCH-DEMO",
+    "mark_type": "OTOLITH",
+    "mark_code": "OTO-YBT-2026-DEMO",
+    "marked_count": 1000,
+    "marked_at": "2026-04-01T09:00:00+08:00",
+    "method": "茜素红S荧光+耳石日轮双重批次标记"
+  },
+  "post_release_survey_recapture": {
+    "survey": {
+      "survey_ref": "YBT-MON-2026-09",
+      "survey_date": "2026-09-15T08:00:00+08:00",
+      "waterbody": "金沙江",
+      "site_name": "坝上 10 公里江段",
+      "method": "刺网+地笼"
+    },
+    "matched_recapture": {
+      "mark_code": "OTO-YBT-2026-DEMO",
+      "species_code": "S_WANG",
+      "count": 9
+    },
+    "unmatched_wild_recapture": {
+      "species_code": "S_WANG",
+      "count": 73
+    }
+  }
 }
